@@ -1,0 +1,520 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>WISE — Habit Intelligence</title>
+<link href="https://fonts.googleapis.com/css2?family=Playfair+Display:ital,wght@0,400;0,700;1,400&family=DM+Sans:wght@300;400;500&display=swap" rel="stylesheet">
+<style>
+:root{--ink:#1a1612;--paper:#f5f0e8;--cream:#ede8dc;--gold:#c9993a;--gold-light:#e8c97a;--rust:#8b3a2a;--sage:#4a6741;--muted:#7a7060;--card-bg:#faf7f2;--border:#d4cdbf;--violet:#6b5fa0;}
+*{margin:0;padding:0;box-sizing:border-box;}
+body{background:var(--paper);color:var(--ink);font-family:'DM Sans',sans-serif;min-height:100vh;}
+.page{display:none;} .page.on{display:block;}
+.wrap{max-width:820px;margin:0 auto;padding:24px;}
+/* Landing */
+.land-center{min-height:100vh;display:flex;flex-direction:column;align-items:center;justify-content:center;text-align:center;padding:24px;}
+.logo{font-family:'Playfair Display',serif;font-size:11px;letter-spacing:7px;text-transform:uppercase;color:var(--gold);margin-bottom:20px;}
+h1{font-family:'Playfair Display',serif;font-size:clamp(40px,8vw,68px);font-weight:700;color:var(--ink);margin-bottom:8px;}
+h1 em{font-style:italic;color:var(--gold);}
+.sub{font-size:14px;color:var(--muted);margin-bottom:12px;}
+.books{display:flex;flex-wrap:wrap;gap:6px;justify-content:center;margin-bottom:44px;}
+.books span{padding:3px 10px;background:var(--cream);border:1px solid var(--border);border-radius:20px;font-size:11px;color:var(--muted);}
+.big-btns{display:flex;gap:14px;flex-wrap:wrap;justify-content:center;width:100%;max-width:500px;}
+.big-btn{flex:1;min-width:190px;padding:26px 20px;border-radius:18px;border:1.5px solid var(--border);background:var(--card-bg);cursor:pointer;font-family:'DM Sans',sans-serif;text-align:center;transition:all .2s;}
+.big-btn:hover{transform:translateY(-2px);box-shadow:0 10px 28px rgba(0,0,0,.08);}
+.big-btn .bi{font-size:30px;display:block;margin-bottom:10px;}
+.big-btn .bl{font-family:'Playfair Display',serif;font-size:18px;font-weight:700;color:var(--ink);display:block;margin-bottom:4px;}
+.big-btn .bd{font-size:11px;color:var(--muted);}
+/* Topic page */
+.back{display:inline-flex;align-items:center;gap:6px;padding:8px 0;font-size:13px;color:var(--muted);cursor:pointer;background:none;border:none;font-family:'DM Sans',sans-serif;margin-bottom:24px;}
+.back:hover{color:var(--gold);}
+.eyebrow{font-size:11px;letter-spacing:3px;text-transform:uppercase;color:var(--gold);margin-bottom:8px;}
+h2{font-family:'Playfair Display',serif;font-size:clamp(24px,4vw,34px);font-weight:700;color:var(--ink);margin-bottom:6px;}
+h2 em{font-style:italic;color:var(--gold);}
+.psub{font-size:13px;color:var(--muted);margin-bottom:28px;padding-bottom:20px;border-bottom:1px solid var(--border);}
+.grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(200px,1fr));gap:12px;margin-bottom:28px;}
+.card{padding:18px 16px;background:var(--card-bg);border:1.5px solid var(--border);border-radius:14px;cursor:pointer;transition:all .18s;}
+.card:hover{border-color:var(--gold);background:var(--cream);transform:translateY(-2px);}
+.card .ci{font-size:22px;margin-bottom:8px;display:block;}
+.card .ct{font-family:'Playfair Display',serif;font-size:15px;font-weight:700;color:var(--ink);margin-bottom:4px;}
+.card .cd{font-size:11px;color:var(--muted);line-height:1.4;}
+.badge{display:inline-block;font-size:9px;letter-spacing:1px;text-transform:uppercase;background:rgba(74,103,65,.12);color:var(--sage);border-radius:4px;padding:2px 5px;margin-left:5px;font-weight:600;}
+.divider{display:flex;align-items:center;gap:12px;margin-bottom:18px;color:var(--muted);font-size:12px;}
+.divider::before,.divider::after{content:'';flex:1;height:1px;background:var(--border);}
+.ql{font-size:11px;letter-spacing:2px;text-transform:uppercase;color:var(--muted);margin-bottom:7px;font-weight:500;}
+.qwrap{position:relative;}
+textarea{width:100%;padding:16px 20px;padding-right:100px;border:1.5px solid var(--border);border-radius:14px;background:var(--card-bg);font-family:'DM Sans',sans-serif;font-size:14px;line-height:1.6;color:var(--ink);resize:none;min-height:88px;outline:none;}
+textarea:focus{border-color:var(--gold);}
+textarea::placeholder{color:#b0a898;font-style:italic;}
+.askbtn{position:absolute;right:10px;bottom:10px;padding:9px 16px;background:var(--ink);color:var(--gold);border:none;border-radius:9px;font-family:'DM Sans',sans-serif;font-size:12px;font-weight:500;cursor:pointer;}
+.askbtn:hover{background:var(--gold);color:var(--ink);}
+.askbtn:disabled{opacity:.4;}
+/* Response page */
+.loading{padding:50px 0;text-align:center;display:none;}
+.loading.on{display:block;}
+.lbooks{display:flex;justify-content:center;gap:5px;margin-bottom:12px;}
+.lb{width:6px;background:var(--border);border-radius:3px;animation:bp 1.2s ease-in-out infinite;}
+.lb:nth-child(1){height:28px}.lb:nth-child(2){height:38px;animation-delay:.1s}.lb:nth-child(3){height:22px;animation-delay:.2s}.lb:nth-child(4){height:42px;animation-delay:.3s}.lb:nth-child(5){height:30px;animation-delay:.4s}
+@keyframes bp{0%,100%{background:var(--border)}50%{background:var(--gold)}}
+.ltxt{font-family:'Playfair Display',serif;font-style:italic;font-size:14px;color:var(--muted);}
+.rcard{background:var(--card-bg);border:1.5px solid var(--border);border-radius:18px;overflow:hidden;margin-top:16px;}
+.rhead{padding:16px 20px;border-bottom:1px solid var(--border);display:flex;align-items:center;justify-content:space-between;background:var(--cream);flex-wrap:wrap;gap:6px;}
+.rtag{font-size:11px;letter-spacing:2px;text-transform:uppercase;color:var(--gold);font-weight:500;}
+.rq{font-family:'Playfair Display',serif;font-size:13px;font-style:italic;color:var(--muted);max-width:55%;text-align:right;}
+.rbody{padding:24px 20px;}
+.bused{display:flex;flex-wrap:wrap;gap:6px;margin-bottom:20px;padding-bottom:16px;border-bottom:1px dashed var(--border);}
+.bpill{padding:4px 10px;background:var(--ink);color:var(--gold-light);border-radius:20px;font-size:11px;font-weight:500;}
+.fblock{margin-bottom:20px;}
+.ftitle{font-family:'Playfair Display',serif;font-size:16px;font-weight:700;color:var(--ink);margin-bottom:6px;display:flex;align-items:center;gap:8px;}
+.ftitle::before{content:'';display:inline-block;width:16px;height:2px;background:var(--gold);flex-shrink:0;}
+.fbody{font-size:13px;line-height:1.75;color:#3a342c;padding-left:24px;}
+.fbody strong{color:var(--ink);font-weight:500;}
+.asteps{background:var(--cream);border-left:3px solid var(--gold);border-radius:0 10px 10px 0;padding:12px 16px;margin-top:6px;}
+.astitle{font-size:10px;letter-spacing:2px;text-transform:uppercase;color:var(--gold);font-weight:500;margin-bottom:8px;}
+.astep{font-size:13px;line-height:1.6;color:var(--ink);padding:5px 0;border-bottom:1px solid var(--border);display:flex;gap:8px;}
+.astep:last-child{border-bottom:none;}
+.snum{color:var(--gold);font-weight:700;font-size:13px;flex-shrink:0;}
+.insight{margin-top:20px;padding-top:16px;border-top:1px dashed var(--border);}
+.insight .ftitle::before{background:var(--gold);}
+.insight .fbody{font-family:'Playfair Display',serif;font-style:italic;font-size:15px;color:var(--ink);}
+/* State buttons */
+.sbuts{padding:16px 20px;border-top:1px solid var(--border);background:var(--paper);}
+.slabel{font-size:11px;color:var(--muted);margin-bottom:9px;}
+.sg3{display:grid;grid-template-columns:1fr 1fr 1fr;gap:7px;}
+.sg2{display:grid;grid-template-columns:1fr 1fr;gap:7px;margin-top:7px;}
+.sb{padding:10px 10px;border:1.5px solid var(--border);border-radius:10px;background:var(--card-bg);cursor:pointer;font-family:'DM Sans',sans-serif;font-size:11px;font-weight:500;color:var(--ink);transition:all .15s;display:flex;flex-direction:column;align-items:center;gap:4px;text-align:center;}
+.sb:hover{border-color:var(--gold);background:var(--cream);}
+.se{font-size:18px;}
+.newq{display:block;width:100%;margin-top:9px;padding:12px;background:none;border:1.5px dashed var(--border);border-radius:10px;font-family:'DM Sans',sans-serif;font-size:12px;color:var(--muted);cursor:pointer;}
+.newq:hover{border-color:var(--gold);color:var(--ink);}
+.hist{margin-bottom:14px;}
+.hitem{padding:10px 14px;background:var(--cream);border:1px solid var(--border);border-radius:9px;margin-bottom:7px;font-size:12px;color:var(--muted);display:flex;gap:7px;}
+footer{text-align:center;padding:28px 0 20px;font-size:11px;color:var(--muted);border-top:1px solid var(--border);margin-top:28px;}
+footer strong{font-family:'Playfair Display',serif;color:var(--gold);font-style:italic;}
+.visual-area{background:white;border:1.5px solid var(--border);border-radius:14px;padding:20px;margin-top:6px;text-align:center;min-height:180px;display:flex;align-items:center;justify-content:center;}
+.visual-area svg{max-width:100%;height:auto;}
+@media(max-width:540px){.big-btns{flex-direction:column}.sg3{grid-template-columns:1fr 1fr}.rq{max-width:100%;text-align:left}.grid{grid-template-columns:1fr 1fr}}
+</style>
+</head>
+<body>
+
+<!-- PAGE 1: LANDING -->
+<div id="p-land" class="page on">
+<div class="land-center">
+  <div class="logo">WISE · Habit Intelligence</div>
+  <h1>Ask the <em>Library</em></h1>
+  <p class="sub">7 books on habits, discipline & execution — synthesized for you.</p>
+  <div class="books">
+    <span>Atomic Habits</span><span>Power of Habit</span><span>The One Thing</span>
+    <span>12 Week Year</span><span>Eat That Frog</span><span>Self-Discipline</span><span>Transform Habits</span>
+  </div>
+  <div class="big-btns">
+    <button class="big-btn" id="btn-learn">
+      <span class="bi">🧠</span>
+      <span class="bl">Learn the Concept</span>
+      <span class="bd">Explore frameworks & deepen understanding</span>
+    </button>
+    <button class="big-btn" id="btn-solve">
+      <span class="bi">🎯</span>
+      <span class="bl">Solve My Problem</span>
+      <span class="bd">Get actionable guidance for a real challenge</span>
+    </button>
+  </div>
+  <div id="mem-banner" style="margin-top:28px;font-size:12px;color:var(--muted);display:none;"></div>
+</div>
+</div>
+
+<!-- PAGE 2A: LEARN -->
+<div id="p-learn" class="page">
+<div class="wrap">
+  <button class="back" id="back-learn">← Back</button>
+  <div class="eyebrow">Learn the Concept</div>
+  <h2>What do you want to <em>understand?</em></h2>
+  <p class="psub">Pick a topic — instant answer, no waiting. Or ask your own question below.</p>
+  <div class="grid" id="learn-grid"></div>
+  <div class="divider">or ask your own question</div>
+  <div class="ql">Your Question</div>
+  <div class="qwrap">
+    <textarea id="learn-ta" placeholder="e.g. What is identity-based habit change? How does the habit loop work?" rows="3"></textarea>
+    <button class="askbtn" id="learn-ask">Ask →</button>
+  </div>
+</div>
+</div>
+
+<!-- PAGE 2B: SOLVE -->
+<div id="p-solve" class="page">
+<div class="wrap">
+  <button class="back" id="back-solve">← Back</button>
+  <div class="eyebrow">Solve My Problem</div>
+  <h2>What are you <em>struggling with?</em></h2>
+  <p class="psub">Pick your situation — instant guidance. Or describe it below.</p>
+  <div class="grid" id="solve-grid"></div>
+  <div class="divider">or describe your situation</div>
+  <div class="ql">Your Problem</div>
+  <div class="qwrap">
+    <textarea id="solve-ta" placeholder="e.g. I start habits with motivation but break them after a week. What am I doing wrong?" rows="3"></textarea>
+    <button class="askbtn" id="solve-ask">Ask →</button>
+  </div>
+</div>
+</div>
+
+<!-- PAGE 3: RESPONSE -->
+<div id="p-resp" class="page">
+<div class="wrap">
+  <button class="back" id="back-resp">← Back</button>
+  <div class="loading" id="loading"><div class="lbooks"><div class="lb"></div><div class="lb"></div><div class="lb"></div><div class="lb"></div><div class="lb"></div></div><div class="ltxt">Consulting the library…</div></div>
+  <div class="hist" id="hist"></div>
+  <div class="rcard" id="rcard" style="display:none">
+    <div class="rhead"><div class="rtag" id="rtag">LEARN MODE</div><div class="rq" id="rq"></div></div>
+    <div class="rbody" id="rbody"></div>
+    <div class="sbuts">
+      <div class="slabel">How did that land for you?</div>
+      <div class="sg3">
+        <button class="sb" id="s-got"><span class="se">✅</span><span>Got it</span><span style="font-size:10px;color:var(--muted)">Deeper</span></button>
+        <button class="sb" id="s-solve"><span class="se">🎯</span><span>Solve it</span><span style="font-size:10px;color:var(--muted)">Actions</span></button>
+        <button class="sb" id="s-visual"><span class="se">🎨</span><span>Visualise</span><span style="font-size:10px;color:var(--muted)">Draw it</span></button>
+      </div>
+      <div class="sg2">
+        <button class="sb" id="s-conf"><span class="se">🤔</span><span>Confused</span><span style="font-size:10px;color:var(--muted)">Simplify</span></button>
+        <button class="sb" id="s-dk"><span class="se">🌀</span><span>Don't know</span><span style="font-size:10px;color:var(--muted)">Ask me</span></button>
+      </div>
+      <button class="newq" id="s-newq">+ Ask a new question</button>
+    </div>
+  </div>
+  <footer><strong>WISE</strong> — turning reading into reasoning</footer>
+</div>
+</div>
+
+<script>
+// ── DATA ──────────────────────────────────────────────────────────────────────
+var LT=[
+  {id:'habit-loop',     e:'🔄', t:'The Habit Loop',         d:'Cue, routine, reward — how habits wire in the brain'},
+  {id:'identity-change',e:'🧠', t:'Identity-Based Change',  d:'Why "I am" is more powerful than "I want"'},
+  {id:'willpower',      e:'💪', t:'Willpower & Discipline',  d:'How self-control works — and how to protect it'},
+  {id:'4-laws',         e:'📐', t:'The 4 Laws of Habits',   d:'James Clear framework for building any habit'},
+  {id:'one-thing',      e:'🎯', t:'The One Thing',          d:'Find and protect your single most important priority'},
+  {id:'12-week-year',   e:'📅', t:'12 Week Year',           d:'Why shorter cycles create more urgency'},
+  {id:'eat-frog',       e:'🐸', t:'Eat That Frog',          d:'The science of doing hard things first'},
+  {id:'marginal-gains', e:'🌱', t:'Marginal Gains',         d:'Why 1% improvements compound dramatically'}
+];
+var ST=[
+  {id:'cant-stick',     e:'😩', t:'Habits Keep Breaking',   d:'You start strong but break the chain after a few days'},
+  {id:'overwhelmed',    e:'😵', t:'Feeling Overwhelmed',    d:'Too much to do, too little focus'},
+  {id:'procrastination',e:'😴', t:'Procrastination',        d:'You know what to do but cannot start'},
+  {id:'low-motivation', e:'⚡', t:'Low Motivation',         d:'Energy and drive keep running out'},
+  {id:'no-priorities',  e:'🔀', t:'No Clear Priorities',    d:'Everything feels urgent, nothing gets done deeply'},
+  {id:'old-patterns',   e:'🔁', t:'Repeating Old Patterns', d:'You keep falling back into habits you tried to change'},
+  {id:'time-management',e:'⏰', t:'Poor Time Management',   d:'Days pass but important work stays undone'},
+  {id:'execution-gap',  e:'📉', t:'Execution Gap',          d:'You plan well but cannot follow through'}
+];
+
+var CC={
+'habit-loop':{title:'The Habit Loop',books:['Power of Habit — Duhigg','Atomic Habits — Clear'],frames:[{t:'Cue → Routine → Reward',e:'Every habit is a three-part neurological loop. The <strong>Cue</strong> triggers your brain to enter automatic mode. The <strong>Routine</strong> is the behaviour. The <strong>Reward</strong> tells your brain whether this loop is worth remembering.',x:'You sit at your desk (cue) → check your phone (routine) → feel momentary relief from boredom (reward). Over time this loop becomes automatic.'},{t:'Cue → Craving → Response → Reward',e:'James Clear adds a critical fourth step: <strong>Craving</strong>. You do not just see the cue and do the routine — you first <em>want</em> something. The craving is the motivational force. Without it, the cue produces no action.',x:'Phone buzzes (cue) → you crave connection (craving) → you check it (response) → feel satisfied (reward). Remove the craving and the habit dissolves.'}],conn:'Duhigg discovered the loop. Clear refined it by adding craving — which explains WHY habits are sticky. Together they give you the diagnosis and the lever.',insight:'You cannot destroy a habit. You can only understand its loop and redesign the routine while keeping the cue and reward intact.'},
+
+'identity-change':{title:'Identity-Based Change',books:['Atomic Habits — Clear'],frames:[{t:'The Three Levels of Change',e:'Most people change outside-in: Goal → Process → Identity. Clear says flip it: <strong>Identity → Process → Outcome</strong>. Decide WHO you want to become first. Then prove it with small actions. Every habit is a vote for your identity.',x:'"I want to run a marathon" fails when motivation dips. "I am a runner" persists — every run is evidence of who you are.'},{t:'Votes for Identity',e:'Your identity is not what you declare. It is what you <em>prove</em> through repeated action. You do not need a unanimous vote — just a majority. Miss one workout? One vote against. Show up tomorrow? Two votes for.',x:'Someone who says "I do not smoke" has a different identity than "I am trying to quit." Same behaviour goal, completely different internal architecture.'}],conn:'Transform Your Habits was Clear\'s earlier conceptual version. Atomic Habits is the fully operationalised system — the 4 Laws make identity-consistent behaviour easier.',insight:'The most powerful question is not "What do I want?" but "Who do I want to become?" — then ask what that person would do right now.'},
+
+'willpower':{title:'Willpower and Discipline',books:['Power of Habit — Duhigg','Daily Self-Discipline','Atomic Habits — Clear'],frames:[{t:'Willpower as a Muscle',e:'Willpower is a finite daily resource. It depletes with each decision and temptation resisted. Judges give harsher sentences before lunch. People make worse financial decisions in the evening. Protect your willpower — schedule important work when it is fullest, typically early morning.',x:'You resist the biscuit at breakfast. Navigate a difficult meeting. By evening you skip the workout. Willpower ran out — not your character.'},{t:'Discipline as a Daily Practice',e:'Discipline is not a personality trait — it is a skill built through daily micro-commitments. Every time you do what you said you would do, however small, you build <strong>self-trust</strong>. Break promises to yourself and your brain stops believing you.',x:'Say "I will write for 10 minutes" and do it. Repeat for 30 days. You now have 30 kept promises. Your brain believes you are someone who keeps commitments.'},{t:'Environment Design',e:'The most sustainable solution to willpower depletion is to stop relying on willpower. Design your environment so the right behaviour requires no decision. This is Atomic Habits Law 3: Make it Easy.',x:'Want to eat less at dinner? Use a smaller plate. Want to exercise? Sleep in your gym clothes. The environment made the decision — no willpower required.'}],conn:'Duhigg explains why willpower fails. Daily Self-Discipline shows how to build it. Clear shows how to design around it. Build the muscle, protect it, and design environments that do not require it.',insight:'Relying on willpower is a fragile strategy. Designing your environment is an antifragile one.'},
+
+'4-laws':{title:'The 4 Laws of Behavior Change',books:['Atomic Habits — James Clear'],frames:[{t:'Law 1: Make it Obvious',e:'Habits need a clear cue. Implementation intentions ("I will do X at TIME in LOCATION") double habit completion rates. Habit stacking ("After I do X, I will do Y") links new habits to existing ones.',x:'Want to take vitamins? Put them next to your morning chai. The chai is an existing habit — vitamins stack onto it.'},{t:'Law 2: Make it Attractive',e:'Habits we look forward to are habits we repeat. Temptation bundling links something you want to do with something you need to do. Reframe the habit: "I get to exercise" vs "I have to exercise."',x:'Only listen to your favourite podcast while walking. Now you look forward to the walk.'},{t:'Law 3: Make it Easy',e:'Reduce friction to near zero. The Two-Minute Rule: scale any habit down until it takes two minutes. "Read before bed" becomes "read one page." Starting is the habit.',x:'Want to meditate? Open the app and sit for 2 minutes. The chain never breaks.'},{t:'Law 4: Make it Satisfying',e:'The brain repeats what feels good immediately. Habit tracking (crossing off a calendar) creates immediate satisfaction. Never miss twice — missing once is an accident, missing twice starts a new bad habit.',x:'Track on a paper calendar. Draw an X each day. The visual chain becomes its own motivation.'}],conn:'The 4 Laws map directly onto Duhigg\'s Habit Loop: Obvious = cue design. Attractive = craving engineering. Easy = routine friction reduction. Satisfying = reward amplification.',insight:'You do not need motivation. You need a system where the right behaviour is the obvious, attractive, easy, and satisfying choice.'},
+
+'one-thing':{title:'The One Thing',books:['The One Thing — Keller'],frames:[{t:'The Focusing Question',e:'"What is the ONE Thing I can do such that by doing it everything else will be easier or unnecessary?" This question forces ruthless prioritisation. It cannot be answered with a list. Ask it for your year, your month, your week, and your day.',x:'A founder asks: "What ONE thing this week makes everything else easier?" Answer: close the one key customer who gives referrals. That one action unlocks everything else.'},{t:'Time Blocking',e:'Your ONE Thing must have protected time. Block 4 hours every morning — before email, before meetings. Willpower is highest in the morning. Your most important work deserves your best hours, not your leftover ones.',x:'Every morning 8 to 12, blocked. No meetings, no WhatsApp. This is ONE Thing time. The rest of the day can be reactive.'}],conn:'Time blocking is environment design from Atomic Habits applied to time. The Focusing Question maps to the 12 Week Year goal — both force a single point of focus.',insight:'Extraordinary results are not from doing more. They come from doing less — but the right thing, deeply, consistently.'},
+
+'12-week-year':{title:'12 Week Year',books:['The 12 Week Year — Moran'],frames:[{t:'Annualised Thinking is the Enemy',e:'When you have 12 months to achieve a goal, urgency is low until November. Most people do more in the last 6 weeks of the year than the first 46 — because the deadline finally feels real. The 12 Week Year treats each 12-week period as a complete year. Every week matters.',x:'December 1st: everyone suddenly finishes annual goals. Same people, same goals — but now the deadline is real. 12WY creates this urgency all year.'},{t:'Weekly Score',e:'Each week you have 3-5 planned execution tasks. At week end, score yourself: what % did you complete? 85% is the target. This score is a lead measure — it predicts your outcome. If weekly scores are consistently 85%+, the goal almost cannot fail.',x:'Goal: 3 new clients in 12 weeks. Weekly plan: 10 calls, 5 proposals. Week 1 score: 60%. Too low. You know in Week 1, not Week 12.'}],conn:'12 Week Year solves the execution gap that The One Thing identifies. One Thing tells you WHAT to focus on. 12WY gives the system to actually execute week by week.',insight:'The problem is never the goal. The problem is the timeframe. Shrink the year to 12 weeks and urgency becomes your permanent companion.'},
+
+'eat-frog':{title:'Eat That Frog',books:['Eat That Frog — Tracy'],frames:[{t:'The Frog Principle',e:'Your frog is your most important and most avoided task. Do it first. Before email, before chai, before small tasks. Everything after feels easier. Willpower and focus peak early — do not spend them on low-value work.',x:'You have a difficult proposal to write (the frog) and 20 emails to reply to. Emails first means the proposal never happens. Flip it: proposal first, emails after.'},{t:'ABCDE Method',e:'Categorise every task: <strong>A</strong> = must do, serious consequences. <strong>B</strong> = should do, mild consequences. <strong>C</strong> = nice to do, no consequences. <strong>D</strong> = delegate. <strong>E</strong> = eliminate. Never do a B or C task when an A is undone.',x:'Writing the quarterly report = A. Organising email folders = C. Most people do C tasks because they are easy. Frog method reverses this.'}],conn:'Eat That Frog is the daily execution habit that powers everything else. One Thing asks what the frog is. ETF makes sure you eat it. 12 Week Year gives the structure; ETF gives the daily discipline.',insight:'If you eat a frog first thing in the morning, the rest of your day can only get better. Do the worst task first — everything after is relief.'},
+
+'marginal-gains':{title:'Marginal Gains',books:['Atomic Habits — Clear'],frames:[{t:'The 1% Rule',e:'If you get 1% better every day for one year, you end up 37 times better. If you get 1% worse each day, you decline to nearly zero. Small improvements compound dramatically — but they are invisible in the short term.',x:'British cycling team applied 1% improvements to everything: seat ergonomics, pillow firmness, hand-washing. No single improvement was meaningful. Combined: the most successful Olympic cycling programme in history.'},{t:'Plateau of Latent Potential',e:'Progress is not linear. You work and nothing changes — then suddenly a breakthrough. Like ice: you heat it from -10 to -1 degrees and nothing visible happens. Then at 0 it melts. The work was accumulating invisibly. Most habits fail because people quit during the plateau.',x:'"I tried waking at 6am for two weeks and felt no different." The habit had not compounded yet. Quit at week 2 and you never see the payoff of week 8.'}],conn:'The 1% Rule is the theoretical foundation for why all systems in this library work. Atomic Habits, 12 Week Year, Eat That Frog — they all produce small daily improvements. The magic is in consistent compounding over time.',insight:'Your habits compound. 1% better every day equals 37x better in a year. The results are invisible for a long time — then they are undeniable.'},
+
+'cant-stick':{title:'Habits Keep Breaking',books:['Atomic Habits — Clear','Power of Habit — Duhigg'],diag:'You are most likely relying on motivation rather than systems, and your habits are too large to sustain automatically. Motivation fluctuates — systems do not.',frames:[{t:'The Real Problem: Too Big, Too Vague',e:'When habits break, the instinct is to blame willpower or character. The real culprit is almost always habit design. The habit was too large. The cue was unclear. The reward was too delayed. None of these are motivation problems — they are system design problems.',x:'"Exercise daily" breaks because it is vague. "After my morning chai, I will do 10 pushups" is specific, small, cued, and immediately satisfying. One works. One does not.'}],steps:['Scale the habit down to 2 minutes. Not as a warmup — as the actual habit. "Read one page." "Do 2 pushups." Consistency matters more than quantity.','Give the habit a specific cue. "After I [EXISTING HABIT], I will [NEW HABIT]." Attach it to something you already do every day.','Never miss twice. Miss once — that is life. Miss twice — that is a new habit forming. The rule: show up the next day, even for 2 minutes.','Track it visibly. A paper calendar with an X for each day done. The visual chain becomes its own motivation.'],insight:'You do not lack motivation. Your system lacks design. Make the habit so small it is almost impossible to skip.'},
+
+'overwhelmed':{title:'Feeling Overwhelmed',books:['The One Thing — Keller','Eat That Frog — Tracy'],diag:'Overwhelm is almost never caused by having too much to do. It is caused by having no clarity on what matters most — so everything feels equally urgent and nothing gets done.',frames:[{t:'Everything Cannot Be Equally Important',e:'The feeling of overwhelm comes from treating your task list as a flat priority plane. In any list of 10 tasks, 1-2 items have 10x the impact of the rest. The Focusing Question forces you to find that item: "What is the ONE thing I can do such that everything else becomes easier or unnecessary?"',x:'You have 15 things to do. Answer the focusing question: "If I could only do ONE thing today, what would it be?" The answer is usually obvious once you ask directly.'}],steps:['Write down everything overwhelming you on one page. All of it. Externalise the chaos — do not keep it in your head.','Apply ABCDE: A = must do today, serious consequences. B = should do. C = nice to do. Circle only the A items.','Ask the focusing question: what ONE thing makes everything else easier? That is your only job until it is done.','Time-block 2-3 hours for your ONE thing first tomorrow. Before email, before WhatsApp.'],insight:'Overwhelm is a clarity problem, not a time problem. You do not need more hours — you need a clearer answer to what matters most right now.'},
+
+'procrastination':{title:'Procrastination',books:['Eat That Frog — Tracy','Atomic Habits — Clear'],diag:'Procrastination is rarely laziness. It is usually a combination of unclear next actions, emotional avoidance, and habits of avoidance reinforced by temporary relief.',frames:[{t:'Procrastination is a Habit Loop',e:'Every time you procrastinate you get a reward: temporary relief from anxiety. Your brain learns: avoid that task = feel better now. Over hundreds of repetitions, avoidance becomes automatic. Like all habits, it can only be changed by redesigning the loop.',x:'You think about the difficult email (cue) → feel anxious (craving to avoid) → open Instagram (routine) → feel temporary relief (reward). Next time the task appears, avoidance is automatic.'}],steps:['Identify your frog: the one task you are avoiding most. Write it down specifically — not "work on project" but "write the first paragraph of the introduction."','Use the 2-minute rule: commit to working on the avoided task for exactly 2 minutes. Set a timer. Starting is the hardest part.','Remove the first friction point. If you are avoiding opening the laptop, open it now and leave it open.','Do the frog first tomorrow. Before chai, before phone, before email.'],insight:'Procrastination is not a time management problem. It is an emotion management problem. The solution is not to feel motivated — it is to act before motivation arrives.'},
+
+'low-motivation':{title:'Low Motivation',books:['Atomic Habits — Clear','Daily Self-Discipline'],diag:'Motivation is not a cause — it is an effect. It follows action, it does not precede it. Waiting for motivation is the most common and most expensive habit mistake.',frames:[{t:'The Motivation Myth',e:'Most people think: I will act when I feel motivated. The science says the opposite: action creates motivation. Even 2 minutes of starting a task generates enough momentum to continue. You will never feel motivated to start. You will always feel motivated after starting.',x:'You do not feel like going to the gym. You put on your shoes and drive there anyway. By warmup time you are glad you came. Motivation appeared after the action — not before.'},{t:'Identity Sustains What Motivation Cannot',e:'Motivation is volatile — it rises and falls daily. Identity is stable. If you are someone who exercises, you exercise even when you do not feel like it — because it is who you are, not something you are trying to do.',x:'"I am trying to be healthier" collapses when motivation is low. "I am someone who moves every day" persists — missing feels like a betrayal of self.'}],steps:['Stop waiting to feel motivated. Commit to starting for 2 minutes only. This removes the psychological resistance to beginning.','Create an if-then plan: "If I do not feel like exercising, I will still put on my shoes and walk to the door." Make the minimum action tiny.','Track your streak. Visible progress creates its own motivation loop.','Reframe the identity: "I am someone who keeps commitments to myself." Act from that identity even once today.'],insight:'Do not wait for motivation. Act first. Motivation is a byproduct of action — not a precondition for it.'},
+
+'no-priorities':{title:'No Clear Priorities',books:['The One Thing — Keller','Eat That Frog — Tracy'],diag:'When everything is a priority, nothing is. The problem is not that you have too many things to do — it is that you have not made the difficult decision about what matters most.',frames:[{t:'The Focusing Question as Daily Practice',e:'Most people prioritise reactively — responding to what is loudest or most recent. The Focusing Question is a proactive tool: "What is the ONE thing I can do today such that everything else becomes easier or unnecessary?" Used every morning, it changes the entire day.',x:'"What is my ONE thing today?" — asked every morning before opening any app. Answer in writing. Then protect time for that answer above all else.'}],steps:['Every evening, write tomorrow\'s ONE thing — one item, not a list.','Apply ABCDE to your current task list. Everything C or below: defer, delegate, or delete.','Ask: which task, if not done this week, would have the most serious consequences? That is your priority.','Block 2-3 hours tomorrow morning for your priority task as if it is a meeting with your most important client.'],insight:'Prioritisation is not about knowing what is important. It is about having the courage to call everything else less important.'},
+
+'old-patterns':{title:'Repeating Old Patterns',books:['Power of Habit — Duhigg','Atomic Habits — Clear'],diag:'Old habits never disappear — they are encoded in the brain permanently. What you experience as relapsing is a dormant habit loop being reactivated by the same old cue in a moment of stress or low willpower.',frames:[{t:'The Golden Rule of Habit Change',e:'You cannot eliminate a bad habit. You can only replace its routine while keeping the cue and reward. Identify what cue triggers the old pattern, identify what reward you were getting, then design a new routine that satisfies the same craving.',x:'You stress-eat when anxious at 4pm and get temporary comfort. New routine: take a 10-minute walk at 4pm. Same cue, same reward, different routine. This works. "Just stop eating junk" without addressing the cue does not.'},{t:'Environmental Triggers',e:'Most relapses are triggered by returning to the same environment where the old habit lived. The environment itself is the cue. To break old patterns, redesign the environment — remove objects, change locations.',x:'People who quit smoking on holiday often relapse when they return to work — because the office environment is saturated with old smoking cues.'}],steps:['Diagnose the loop: identify the specific cue, the routine, and the reward you were getting.','Design a substitute routine that delivers the same reward. The craving stays — only the behaviour changes.','Change the environment that houses the old cue wherever possible.','Prepare for stress moments: "When I feel X, I will do Y instead." Written down in advance.'],insight:'You are not weak for repeating old patterns. The old habit is still encoded in your brain. You need to redesign the cue or routine — not try harder.'},
+
+'time-management':{title:'Poor Time Management',books:['Eat That Frog — Tracy','The One Thing — Keller'],diag:'Most time management problems are actually priority management problems. You likely have enough time — but it is spent on low-value activities that feel productive while high-value work gets deferred.',frames:[{t:'Law of Forced Efficiency',e:'There is never enough time to do everything — but there is always enough time to do the most important thing. No one has ever completed their full task list. The question is never "how do I do everything?" but "what is the best use of my time right now?"',x:'You have 30 tasks. You will complete 10-12. Choose reactively: 12 low-value tasks done. Choose deliberately: the 3 high-value ones done first, everything else is bonus.'}],steps:['Audit one week: track what you actually do hourly for 5 days. Most people are shocked by how much time disappears.','Identify your top 3 high-value tasks this week — things that directly create results. Non-negotiable before anything else.','Batch reactive work (email, WhatsApp, calls) into 2 fixed windows per day — not throughout the day. This recovers 2+ hours.','Design a model week: what would your ideal week look like? Block that structure first, let reality fill the remaining spaces.'],insight:'You cannot manage time. You can only manage yourself within time. The question is never "do I have enough time?" but "what am I choosing to do with the time I have?"'},
+
+'execution-gap':{title:'The Execution Gap',books:['12 Week Year — Moran','Daily Self-Discipline'],diag:'Knowing what to do but not doing it is not an intelligence or knowledge problem. It is a consistency problem rooted in vague plans, no feedback loops, and misaligned time.',frames:[{t:'Lag vs Lead Measures',e:'Most people track <strong>lag measures</strong> — outcomes already happened. By the time you see a bad lag measure, it is too late to fix that period. Lead measures are the behaviours that predict outcomes. Track these instead. If your weekly lead measure is done, the result will follow.',x:'Lag: "I lost only 1kg this month." Too late to fix. Lead: "I exercised 4x this week as planned." You know on Friday whether you are on track.'}],steps:['Define your goal in 12-week terms. Write one specific compelling 12-week goal.','Identify 3-5 weekly actions (lead measures) that, if done consistently, make the goal almost inevitable.','Score yourself every week: what % of planned actions did you complete? Target 85%. Review every Monday.','Book a weekly 15-minute accountability session with yourself. Review last week, plan next week.'],insight:'The gap between knowing and doing is not filled by more knowledge. It is filled by shorter feedback loops, clearer plans, and consistent weekly accountability.'}
+};
+
+// ── KB for custom queries ──────────────────────────────────────────────────
+var KB='You are WISE — Habit Intelligence System built on 7 books: Atomic Habits (Clear), Power of Habit (Duhigg), The One Thing (Keller), 12 Week Year (Moran), Eat That Frog (Tracy), Daily Self-Discipline, Transform Your Habits (Clear).\n\nKey frameworks: Identity-based habits, 4 Laws (Obvious/Attractive/Easy/Satisfying), Habit Loop (Cue-Routine-Reward), Willpower as muscle, Keystone habits, Focusing Question, Time blocking, 12-week urgency, Eat the Frog/ABCDE, Marginal gains/1% rule, Execution gap, Lead vs lag measures.\n\nCross-book connections: 4 Laws map onto Habit Loop. Time blocking = environment design for ONE Thing. 12WY + ETF solve execution gap. Discipline = meta-habit underlying all systems.';
+
+var SP={
+learn:KB+'\nMODE: LEARN THE CONCEPT. Explain with depth, cross-book connections.\nReturn ONLY valid JSON (no markdown, no backticks): {"books_used":["Book"],"frameworks":[{"title":"t","explanation":"e","example":"x"}],"connection":"c","key_insight":"i"}',
+solve:KB+'\nMODE: SOLVE THE PROBLEM. Diagnose, give 3-4 action steps.\nReturn ONLY valid JSON: {"books_used":["Book"],"diagnosis":"d","frameworks":[{"title":"t","explanation":"e","example":"x"}],"action_steps":["s1","s2","s3"],"key_insight":"i"}',
+deeper:KB+'\nMODE: GO DEEPER. Nuances, third book, where framework fails.\nReturn ONLY valid JSON: {"books_used":["b1","b2","b3"],"frameworks":[{"title":"t","explanation":"e","example":"x"}],"where_it_fails":"w","connection":"c","key_insight":"i"}',
+confused:KB+'\nMODE: SIMPLIFY. One book, Indian analogy (cricket, chai, office). No jargon.\nReturn ONLY valid JSON: {"books_used":["b"],"frameworks":[{"title":"t","explanation":"e","example":"x"}],"analogy":"a","key_insight":"i"}',
+dont_know:KB+'\nMODE: CLARIFY. Ask ONE warm clarifying question.\nReturn ONLY valid JSON: {"books_used":[],"frameworks":[],"clarifying_question":"q","why_asking":"w","key_insight":"We will figure this out together."}',
+visual:KB+'\nMODE: VISUAL SVG. viewBox="0 0 600 400". Colors: #1a1612 #c9993a #f5f0e8 #4a6741 #8b3a2a. Clean, labeled.\nReturn ONLY valid JSON: {"books_used":["b"],"framework_name":"n","svg_code":"<svg...>...</svg>","explanation":"e","key_insight":"i"}'
+};
+
+// ── MEMORY ────────────────────────────────────────────────────────────────
+var MK='wise_v1';
+function lm(){try{return JSON.parse(localStorage.getItem(MK))||{t:[],f:[],s:0};}catch(e){return{t:[],f:[],s:0};}}
+function sm(m){try{localStorage.setItem(MK,JSON.stringify(m));}catch(e){}}
+function um(q,rd){var m=lm();if(q&&!m.t.includes(q)){m.t.unshift(q);if(m.t.length>10)m.t.pop();}if(rd&&rd.frames)rd.frames.forEach(function(f){if(f.t&&!m.f.includes(f.t)){m.f.unshift(f.t);if(m.f.length>15)m.f.pop();}});sm(m);}
+function mc(){var m=lm();if(!m.t.length)return '';var c='\n\n=== USER MEMORY ===\nSessions: '+m.s+'\n';if(m.t.length)c+='Previously explored: '+m.t.slice(0,4).join('; ')+'\n';if(m.f.length)c+='Frameworks seen: '+m.f.slice(0,5).join(', ')+' — build on these\n';return c+'=== END ===';}
+
+// ── NAVIGATION ────────────────────────────────────────────────────────────
+var curMode='learn', curQ='', prevPage='p-land';
+
+function show(id){
+  document.querySelectorAll('.page').forEach(function(p){p.classList.remove('on');});
+  document.getElementById(id).classList.add('on');
+  window.scrollTo(0,0);
+  prevPage=id;
+}
+
+// ── CARD RENDERING ────────────────────────────────────────────────────────
+function buildCards(){
+  var lg=document.getElementById('learn-grid');
+  var sg=document.getElementById('solve-grid');
+  LT.forEach(function(t){
+    var d=document.createElement('div');
+    d.className='card';
+    d.innerHTML='<span class="ci">'+t.e+'</span><div class="ct">'+t.t+' <span class="badge">instant</span></div><div class="cd">'+t.d+'</div>';
+    d.dataset.id=t.id;
+    d.dataset.mode='learn';
+    d.addEventListener('click',onCardClick);
+    lg.appendChild(d);
+  });
+  ST.forEach(function(t){
+    var d=document.createElement('div');
+    d.className='card';
+    d.innerHTML='<span class="ci">'+t.e+'</span><div class="ct">'+t.t+' <span class="badge">instant</span></div><div class="cd">'+t.d+'</div>';
+    d.dataset.id=t.id;
+    d.dataset.mode='solve';
+    d.addEventListener('click',onCardClick);
+    sg.appendChild(d);
+  });
+}
+
+function onCardClick(){
+  var id=this.dataset.id;
+  var mode=this.dataset.mode;
+  var data=CC[id];
+  if(!data){alert('Coming soon!');return;}
+  curMode=mode;
+  curQ=data.title;
+  logEvent('card_click', id);
+  um(data.title, data);
+  show('p-resp');
+  document.getElementById('hist').innerHTML='';
+  document.getElementById('loading').classList.remove('on');
+  document.getElementById('rcard').style.display='none';
+  renderResp(data, mode==='solve'?'SOLVE MODE':'LEARN MODE', data.title);
+}
+
+// ── RENDER RESPONSE ───────────────────────────────────────────────────────
+function renderResp(d, tag, q){
+  var rtag=document.getElementById('rtag');
+  var rqEl=document.getElementById('rq');
+  var rbody=document.getElementById('rbody');
+  var rcard=document.getElementById('rcard');
+
+  rtag.textContent=tag;
+  rqEl.textContent='"'+(q.length>50?q.substring(0,50)+'…':q)+'"';
+
+  var h='';
+  var books=d.books||d.books_used||[];
+  if(books.length) h+='<div class="bused">'+books.map(function(b){return '<span class="bpill">📖 '+b+'</span>';}).join('')+'</div>';
+  if(d.diag||d.diagnosis) h+='<div class="fblock"><div class="ftitle">Diagnosis</div><div class="fbody">'+(d.diag||d.diagnosis)+'</div></div>';
+  if(d.svg_code) h+='<div class="fblock"><div class="ftitle">'+(d.framework_name||'Visual')+'</div><div class="visual-area">'+d.svg_code+'</div>'+(d.explanation?'<div class="fbody" style="margin-top:12px">'+d.explanation+'</div>':'')+'</div>';
+  var frames=d.frames||d.frameworks||[];
+  frames.forEach(function(fw){
+    var title=fw.t||fw.title||'';
+    var expl=fw.e||fw.explanation||'';
+    var exam=fw.x||fw.example||'';
+    if(!title)return;
+    h+='<div class="fblock"><div class="ftitle">'+title+'</div><div class="fbody">'+expl+(exam?'<br><br><strong>Example:</strong> '+exam:'')+'</div></div>';
+  });
+  if(d.clarifying_question) h+='<div class="fblock"><div class="ftitle">Let me ask you this</div><div class="fbody">'+d.clarifying_question+(d.why_asking?'<br><br><em>'+d.why_asking+'</em>':'')+'</div></div>';
+  if(d.conn||d.connection) h+='<div class="fblock"><div class="ftitle">Cross-Book Connection</div><div class="fbody">'+(d.conn||d.connection)+'</div></div>';
+  if(d.where_it_fails) h+='<div class="fblock"><div class="ftitle">Where This Framework Has Limits</div><div class="fbody">'+d.where_it_fails+'</div></div>';
+  var steps=d.steps||d.action_steps||[];
+  if(steps.length){h+='<div class="asteps"><div class="astitle">Action Steps</div>';steps.forEach(function(s,i){h+='<div class="astep"><span class="snum">'+(i+1)+'.</span><span>'+s+'</span></div>';});h+='</div>';}
+  var ins=d.insight||d.key_insight||'';
+  if(ins) h+='<div class="fblock insight"><div class="ftitle">Key Insight</div><div class="fbody">"'+ins+'"</div></div>';
+
+  rbody.innerHTML=h;
+  rcard.style.display='block';
+  rcard.scrollIntoView({behavior:'smooth',block:'start'});
+}
+
+// ── API CALL ─────────────────────────────────────────────────────────────
+function apiCall(msg, sysprompt, tag, onDone){
+  document.getElementById('loading').classList.add('on');
+  document.getElementById('rcard').style.display='none';
+  fetch('/api/wise',{
+    method:'POST',headers:{'Content-Type':'application/json'},
+    body:JSON.stringify({
+      model:(tag==='VISUAL MODE')?'claude-sonnet-4-20250514':'claude-haiku-4-5-20251001',
+      max_tokens:1000,system:sysprompt,
+      messages:[{role:'user',content:msg}]
+    })
+  }).then(function(r){return r.json();}).then(function(data){
+    var raw=data.content.map(function(i){return i.text||'';}).join('');
+    var parsed;
+    try{
+      var c=raw.trim().replace(/^```(?:json)?\s*/i,'').replace(/\s*```\s*$/,'');
+      var s=c.indexOf('{'),e=c.lastIndexOf('}');
+      if(s!==-1&&e!==-1)c=c.substring(s,e+1);
+      parsed=JSON.parse(c);
+    }catch(err){parsed={books_used:[],frameworks:[{title:'Response',explanation:raw,example:''}],key_insight:''};}
+    document.getElementById('loading').classList.remove('on');
+    onDone(parsed);
+  }).catch(function(err){
+    document.getElementById('loading').classList.remove('on');
+    alert('Could not reach the library. Check connection.');
+  });
+}
+
+function archiveToHist(){
+  var rc=document.getElementById('rcard');
+  if(rc.style.display==='none')return;
+  var tag=document.getElementById('rtag').textContent;
+  var q=document.getElementById('rq').textContent;
+  var item=document.createElement('div');item.className='hitem';
+  item.innerHTML='<span>💬</span><span><strong>'+tag+'</strong> — '+q+'</span>';
+  document.getElementById('hist').appendChild(item);
+}
+
+function stateCall(state){
+  logEvent('state_button', state);
+  archiveToHist();
+  var memCtx=mc();
+  var map={
+    got_it:  {msg:'Go deeper on: "'+curQ+'"',         sp:SP.deeper+memCtx,   tag:'GOING DEEPER'},
+    solve:   {msg:'Give action steps for: "'+curQ+'"',sp:SP.solve+memCtx,    tag:'SOLVE MODE'},
+    confused:{msg:'Simplify: "'+curQ+'"',             sp:SP.confused+memCtx, tag:'SIMPLIFYING'},
+    dont_know:{msg:'User lost on: "'+curQ+'"',         sp:SP.dont_know+memCtx,tag:'CLARIFYING'},
+    visual:  {msg:'Create visual for: "'+curQ+'"',    sp:SP.visual,          tag:'VISUAL MODE'}
+  };
+  var m=map[state];
+  apiCall(m.msg,m.sp,m.tag,function(d){renderResp(d,m.tag,curQ);});
+}
+
+// ── ANALYTICS ENGINE ─────────────────────────────────────────────────────
+var AK='wise_analytics_v1';
+// Google Sheets webhook URL — replace with your own (instructions below)
+var SHEETS_URL='/api/analytics';
+
+function logEvent(type, data){
+  // 1. Store locally always
+  var log=[];
+  try{log=JSON.parse(localStorage.getItem(AK))||[];}catch(e){}
+  var entry={
+    type:type,          // 'card_click' | 'custom_query' | 'state_button' | 'session_start'
+    data:data,          // what was queried/clicked
+    mode:curMode,       // learn/solve
+    ts:new Date().toISOString().split('T')[0],  // date only, no personal time
+    session:lm().s||1
+  };
+  log.push(entry);
+  if(log.length>200)log=log.slice(-200); // keep last 200 events
+  try{localStorage.setItem(AK,JSON.stringify(log));}catch(e){}
+
+  // 2. If Sheets URL configured, send silently
+  if(SHEETS_URL){
+    fetch(SHEETS_URL,{
+      method:'POST',
+      mode:'no-cors',
+      headers:{'Content-Type':'application/json'},
+      body:JSON.stringify(entry)
+    }).catch(function(){});  // silent fail — never block UI
+  }
+}
+
+function getAnalyticsSummary(){
+  var log=[];
+  try{log=JSON.parse(localStorage.getItem(AK))||[];}catch(e){}
+  if(!log.length)return null;
+
+  var cardClicks={}, customQueries=[], stateButtons={}, totalSessions=0;
+
+  log.forEach(function(e){
+    if(e.type==='card_click'){
+      cardClicks[e.data]=(cardClicks[e.data]||0)+1;
+    } else if(e.type==='custom_query'){
+      customQueries.push(e.data);
+    } else if(e.type==='state_button'){
+      stateButtons[e.data]=(stateButtons[e.data]||0)+1;
+    } else if(e.type==='session_start'){
+      totalSessions++;
+    }
+  });
+
+  // Sort card clicks by frequency
+  var topCards=Object.keys(cardClicks).sort(function(a,b){return cardClicks[b]-cardClicks[a];}).slice(0,5);
+
+  return {
+    total_events: log.length,
+    top_cards: topCards.map(function(k){return k+' ('+cardClicks[k]+')';}),
+    custom_queries: customQueries.slice(-10),  // last 10
+    state_buttons: stateButtons,
+    sessions: totalSessions
+  };
+}
+
+// ── INIT ──────────────────────────────────────────────────────────────────
+document.addEventListener('DOMContentLoaded',function(){
+  // Memory
+  var mem=lm(); mem.s=(mem.s||0)+1; sm(mem);
+  logEvent('session_start', 'session_'+mem.s);
+  if(mem.s>=2&&mem.t.length){
+    var mb=document.getElementById('mem-banner');
+    mb.textContent='Welcome back — last time: "'+mem.t[0]+'"';
+    mb.style.display='block';
+  }
+
+  // Build cards
+  buildCards();
+
+  // Landing buttons
+  document.getElementById('btn-learn').addEventListener('click',function(){curMode='learn';show('p-learn');});
+  document.getElementById('btn-solve').addEventListener('click',function(){curMode='solve';show('p-solve');});
+
+  // Back buttons
+  document.getElementById('back-learn').addEventListener('click',function(){show('p-land');});
+  document.getElementById('back-solve').addEventListener('click',function(){show('p-land');});
+  document.getElementById('back-resp').addEventListener('click',function(){show('p-'+curMode);});
+
+  // Custom queries
+  document.getElementById('learn-ask').addEventListener('click',function(){
+    var q=document.getElementById('learn-ta').value.trim();
+    if(!q)return;
+    curMode='learn';curQ=q;
+    show('p-resp');
+    document.getElementById('hist').innerHTML='';
+    document.getElementById('rcard').style.display='none';
+    logEvent('custom_query', q);
+    apiCall(q,SP.learn+mc(),'LEARN MODE',function(d){um(q,d);renderResp(d,'LEARN MODE',q);});
+  });
+  document.getElementById('solve-ask').addEventListener('click',function(){
+    var q=document.getElementById('solve-ta').value.trim();
+    if(!q)return;
+    curMode='solve';curQ=q;
+    show('p-resp');
+    document.getElementById('hist').innerHTML='';
+    document.getElementById('rcard').style.display='none';
+    logEvent('custom_query', q);
+    apiCall(q,SP.solve+mc(),'SOLVE MODE',function(d){um(q,d);renderResp(d,'SOLVE MODE',q);});
+  });
+
+  // State buttons
+  document.getElementById('s-got').addEventListener('click',function(){stateCall('got_it');});
+  document.getElementById('s-solve').addEventListener('click',function(){stateCall('solve');});
+  document.getElementById('s-visual').addEventListener('click',function(){stateCall('visual');});
+  document.getElementById('s-conf').addEventListener('click',function(){stateCall('confused');});
+  document.getElementById('s-dk').addEventListener('click',function(){stateCall('dont_know');});
+  document.getElementById('s-newq').addEventListener('click',function(){show('p-'+curMode);});
+});
+</script>
+</body>
+</html>
